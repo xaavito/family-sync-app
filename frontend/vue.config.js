@@ -14,7 +14,7 @@ module.exports = defineConfig({
     workboxPluginMode: 'InjectManifest',
     workboxOptions: {
       // Usar nuestro service worker personalizado
-      swSrc: 'public/service-worker.js',
+      swSrc: './public/service-worker.js',
       swDest: 'service-worker.js',
     },
     
