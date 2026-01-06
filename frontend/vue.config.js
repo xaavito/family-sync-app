@@ -1,7 +1,22 @@
 const { defineConfig } = require('@vue/cli-service');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = defineConfig({
   transpileDependencies: true,
+  
+  // Configurar webpack para copiar service-worker.js manualmente
+  configureWebpack: {
+    plugins: [
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: 'public/service-worker.js',
+            to: 'service-worker.js',
+          },
+        ],
+      }),
+    ],
+  },
   
   pwa: {
     name: 'Family Sync',
@@ -10,12 +25,12 @@ module.exports = defineConfig({
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black-translucent',
     
-    // Deshabilitar generación automática de service worker
-    workboxPluginMode: 'InjectManifest',
+    // Deshabilitar completamente Workbox
+    workboxPluginMode: 'GenerateSW',
     workboxOptions: {
-      // Usar nuestro service worker personalizado
-      swSrc: './public/service-worker.js',
-      swDest: 'service-worker.js',
+      // No generar service worker
+      exclude: [/.*/],
+      skipWaiting: false,
     },
     
     manifestOptions: {
