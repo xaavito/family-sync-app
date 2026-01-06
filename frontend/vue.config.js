@@ -10,9 +10,12 @@ module.exports = defineConfig({
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black-translucent',
     
+    // Deshabilitar generación automática de service worker
+    workboxPluginMode: 'InjectManifest',
     workboxOptions: {
-      skipWaiting: true,
-      clientsClaim: true,
+      // Usar nuestro service worker personalizado
+      swSrc: 'public/service-worker.js',
+      swDest: 'service-worker.js',
     },
     
     manifestOptions: {
