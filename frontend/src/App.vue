@@ -53,16 +53,14 @@ body {
 
 .app-container {
   position: relative;
-  min-height: 100vh;
 }
 
 .main-content {
-  padding-bottom: 80px;
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
 }
 
 .main-content.with-nav {
-  padding-bottom: 80px;
+  padding-bottom: 70px;
 }
 
 .bottom-nav {

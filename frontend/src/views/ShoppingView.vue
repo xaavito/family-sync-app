@@ -191,7 +191,6 @@ onUnmounted(() => {
 
 <style scoped>
 .shopping-view {
-  min-height: 100vh;
   background: var(--gray-100);
 }
 

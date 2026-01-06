@@ -94,6 +94,8 @@ const startServer = async () => {
 ║   Ready to sync your family! 👨‍👩‍👧‍👦      ║
 ╚════════════════════════════════════════╝
     `);
+
+    console.log('proces env', process.env)
   });
 };
 
