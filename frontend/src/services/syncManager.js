@@ -43,12 +43,29 @@ class SyncManager {
     try {
       // Intentar cargar desde el servidor si hay conexión
       if (this.isOnline()) {
-        const response = await api.get('/shopping');
-        const items = response.data;
+        // Primero obtener las listas
+        const listsResponse = await api.get('/shopping/lists');
+        const lists = listsResponse.data.lists || [];
+        
+        // Obtener items de la primera lista (o crear una si no existe)
+        let listId = 1;
+        if (lists.length === 0) {
+          const newListResponse = await api.post('/shopping/lists', { name: 'Lista Principal' });
+          listId = newListResponse.data.list.id;
+        } else {
+          listId = lists[0].id;
+        }
+        
+        // Obtener items de la lista
+        const response = await api.get(`/shopping/lists/${listId}/items`);
+        const items = response.data.items || [];
         
         // Guardar en IndexedDB
         await offlineStorage.saveShoppingItems(items);
         await offlineStorage.setLastSync('shopping');
+        
+        // Guardar el listId para usarlo después
+        localStorage.setItem('currentListId', listId);
         
         return items;
       } else {
@@ -73,9 +90,12 @@ class SyncManager {
 
     try {
       if (this.isOnline()) {
+        // Obtener el listId actual
+        const listId = localStorage.getItem('currentListId') || 1;
+        
         // Intentar agregar al servidor
-        const response = await api.post('/shopping', item);
-        const savedItem = response.data;
+        const response = await api.post(`/shopping/lists/${listId}/items`, item);
+        const savedItem = response.data.item;
         
         // Guardar en IndexedDB
         await offlineStorage.saveShoppingItem(savedItem);
@@ -122,7 +142,7 @@ class SyncManager {
     try {
       if (this.isOnline()) {
         // Actualizar en el servidor
-        await api.patch(`/shopping/${id}`, { completed });
+        await api.patch(`/shopping/items/${id}`, { checked: completed });
         
         // Actualizar en IndexedDB
         const item = await offlineStorage.get('shoppingItems', id);
@@ -165,7 +185,7 @@ class SyncManager {
     try {
       if (this.isOnline()) {
         // Eliminar del servidor
-        await api.delete(`/shopping/${id}`);
+        await api.delete(`/shopping/items/${id}`);
         
         // Eliminar de IndexedDB
         await offlineStorage.deleteShoppingItem(id);
@@ -197,7 +217,9 @@ class SyncManager {
   async clearCompletedItems() {
     try {
       if (this.isOnline()) {
-        await api.delete('/shopping/completed');
+        // Obtener el listId actual
+        const listId = localStorage.getItem('currentListId') || 1;
+        await api.delete(`/shopping/lists/${listId}/clear`);
         
         // Recargar items
         return await this.loadShoppingItems();
