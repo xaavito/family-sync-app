@@ -355,7 +355,7 @@ ingress:
 
 ```bash
 # Crear ruta DNS automáticamente
-cloudflared tunnel route dns family-sync family-sync.javiermartingonzalez.com
+cloudflared tunnel route dns family-sync family-app.javiermartingonzalez.com
 ```
 
 O si prefieres usar el dominio gratuito de Cloudflare:
@@ -625,8 +625,8 @@ tunnel: <TUNNEL-ID>
 credentials-file: /home/pi/.cloudflared/<TUNNEL-ID>.json
 
 ingress:
-  - hostname: family-sync.tudominio.com
-    service: http://localhost:3000
+  - hostname: family-app.javiermartingonzalez.com
+    service: http://localhost:8080
     originRequest:
       noTLSVerify: true
   - service: http_status:404

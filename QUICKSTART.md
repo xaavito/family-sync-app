@@ -92,7 +92,7 @@ hostname -I
 #### En tu celular/tablet:
 
 1. Abre el navegador (Safari en iOS, Chrome en Android)
-2. Ve a: `http://192.168.1.100:3000`
+2. Ve a: `http://192.168.1.100:8080`
 3. Regístrate creando una cuenta
 4. **Agregar a pantalla de inicio:**
    - **iOS (Safari)**: Toca el botón "Compartir" → "Agregar a pantalla de inicio"
