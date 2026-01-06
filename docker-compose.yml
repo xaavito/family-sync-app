@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: familydb
+      POSTGRES_USER: familyuser
+      POSTGRES_PASSWORD: familypass123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Backend Node.js
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://familyuser:familypass123@db:5432/familydb
+      JWT_SECRET: tu-secret-muy-seguro-aqui
+      NODE_ENV: production
+      PORT: 3001
+    depends_on:
+      - db
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Frontend Vue.js
+  frontend:
+    build: ./frontend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Nginx Proxy Reverso (NUEVO)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # - ./nginx/ssl:/etc/nginx/ssl:ro  # Si usas certificados SSL
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
