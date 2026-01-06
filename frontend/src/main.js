@@ -2,8 +2,20 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
-import './registerServiceWorker';
 import offlineStorage from './services/offlineStorage';
+
+// Registrar service worker manualmente
+if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('✅ Service Worker registrado:', registration);
+      })
+      .catch(error => {
+        console.error('❌ Error al registrar Service Worker:', error);
+      });
+  });
+}
 
 const app = createApp(App);
 const pinia = createPinia();
